@@ -1,4 +1,4 @@
-name: Build Windows x64
+name: Build Windows
 
 on:
   push:
@@ -11,8 +11,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -20,21 +19,13 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore EthornellTools.sln
 
-      - name: Build solution (Release, Any CPU)
-        run: |
-          msbuild EthornellTools.sln ^
-            /p:Configuration=Release ^
-            /p:Platform="Any CPU" ^
-            /m
+      - name: Build solution (Release)
+        run: msbuild EthornellTools.sln /p:Configuration=Release /p:Platform="Any CPU" /m
 
-      - name: Upload BgiDisassembler
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: BgiDisassembler-win64
-          path: BgiDisassembler/bin/Release/
-
-      - name: Upload BgiImageEncoder
-        uses: actions/upload-artifact@v4
-        with:
-          name: BgiImageEncoder-win64
-          path: BgiImageEncoder/bin/Release/
+          name: windows-build
+          path: |
+            BgiDisassembler/bin/Release/
+            BgiImageEncoder/bin/Release/
